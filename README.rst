@@ -1,6 +1,9 @@
 ChemDataExtractor
 =================
 
+**Minimal update of CED for installation with Python 3.10.
+Imports have been fixed. Obsolete package(s) have been replaced.**
+
 .. image:: http://img.shields.io/pypi/v/ChemDataExtractor.svg?style=flat-square
     :target: https://pypi.python.org/pypi/ChemDataExtractor
 
