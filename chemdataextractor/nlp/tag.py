@@ -18,7 +18,7 @@ import pickle
 import random
 import re
 
-import dawg
+import json
 import pycrfsuite
 import six
 
@@ -367,7 +367,7 @@ class DictionaryTagger(BaseTagger):
 
         :param list(list(string)) words: list of words, each of which is a list of tokens.
         """
-        self._dawg = dawg.CompletionDAWG()
+        self._dawg : list = []
         self.model = model if model is not None else self.model
         self.entity = entity if entity is not None else self.entity
         self.case_sensitive = case_sensitive if case_sensitive is not None else self.case_sensitive
@@ -378,17 +378,19 @@ class DictionaryTagger(BaseTagger):
 
     def load(self, model):
         """Load pickled DAWG from disk."""
-        self._dawg.load(find_data(model))
-        self._loaded_model = True
+        with open(find_data(model)) as fp:
+            self._dawg = json.load(fp)
+            self._loaded_model = True
 
     def save(self, path):
         """Save pickled DAWG to disk."""
-        self._dawg.save(path)
+        with open(path, 'w+') as fp:
+            json.dump(self._dawg, fp)
 
     def build(self, words):
         """Construct dictionary DAWG from tokenized words."""
         words = [self._normalize(tokens) for tokens in words]
-        self._dawg = dawg.CompletionDAWG(words)
+        self._dawg = words
         self._loaded_model = True
 
     def _normalize(self, tokens):
@@ -397,6 +399,12 @@ class DictionaryTagger(BaseTagger):
             return ' '.join(self.lexicon[t].normalized for t in tokens)
         else:
             return ' '.join(self.lexicon[t].lower for t in tokens)
+        
+    def _has_keys_with_prefix(self, key):
+        for k in self._dawg:
+            if k.startswith(key):
+                return True
+        return False
 
     def tag(self, tokens):
         """Return a list of (token, tag) tuples for a given list of tokens."""
@@ -418,7 +426,7 @@ class DictionaryTagger(BaseTagger):
         # TODO: This could be a little more efficient by skipping indexes forward to next delim points.
         while True:
             current = norm[start_i:end_i]
-            if self._dawg.has_keys_with_prefix(current):
+            if self._has_keys_with_prefix(current):
                 # print('%s:%s:%s' % (start_i, end_i, current))
                 # If the current span is in the dawg, and isn't followed by an alphanumeric character
                 if current in self._dawg and start_i in delims and end_i in delims:
