@@ -2,8 +2,8 @@ ChemDataExtractor
 =================
 ChemDataExtractor is a toolkit for extracting chemical information from the scientific literature.
 
-**This fork is a minimal update of CED for installation with Python 3.10.
-Imports have been fixed. Obsolete package(s) have been replaced.**
+**This fork is a minimal update of ChemDataExtractor for installation with
+Python 3.10. Imports have been fixed. Obsolete package(s) have been replaced.**
 
 Installation
 ------------
