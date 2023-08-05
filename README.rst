@@ -1,44 +1,16 @@
 ChemDataExtractor
 =================
-
-**Minimal update of CED for installation with Python 3.10.
-Imports have been fixed. Obsolete package(s) have been replaced.**
-
-.. image:: http://img.shields.io/pypi/v/ChemDataExtractor.svg?style=flat-square
-    :target: https://pypi.python.org/pypi/ChemDataExtractor
-
-.. image:: http://img.shields.io/pypi/l/ChemDataExtractor.svg?style=flat-square
-    :target: https://github.com/mcs07/ChemDataExtractor/blob/master/LICENSE
-
-.. image:: http://img.shields.io/travis/mcs07/ChemDataExtractor.svg?style=flat-square
-    :target: https://travis-ci.org/mcs07/ChemDataExtractor
-
 ChemDataExtractor is a toolkit for extracting chemical information from the scientific literature.
 
-
-Features
---------
-
-- HTML, XML and PDF document readers
-- Chemistry-aware natural language processing pipeline
-- Chemical named entity recognition
-- Rule-based parsing grammars for property and spectra extraction
-- Table parser for extracting tabulated data
-- Document processing to resolve data interdependencies
-
+**This fork is a minimal update of CED for installation with Python 3.10.
+Imports have been fixed. Obsolete package(s) have been replaced.**
 
 Installation
 ------------
 
-To install ChemDataExtractor, simply run::
+To install this fork of ChemDataExtractor, run::
 
-    pip install chemdataextractor
-
-Or if you are an Anaconda user, run::
-
-    conda install -c chemdataextractor chemdataextractor
-
-Alternatively, try one of the other `installation options`_.
+    pip install git+https://github.com/akhlakm/ChemDataExtractor.git
 
 
 Documentation
