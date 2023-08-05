@@ -13,7 +13,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 from abc import ABCMeta, abstractproperty
-import collections
+import collections.abc as collections
 import io
 import json
 import logging

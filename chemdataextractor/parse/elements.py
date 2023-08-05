@@ -11,7 +11,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
-import collections
+import collections.abc as collections
 import copy
 import logging
 import re
@@ -19,6 +19,7 @@ import re
 from lxml.builder import E
 import six
 import types
+
 
 
 class ParseException(Exception):

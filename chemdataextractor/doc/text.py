@@ -12,7 +12,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 from abc import abstractproperty
-import collections
+import collections.abc as collections
 import logging
 import re
 
