@@ -18,7 +18,6 @@ import pickle
 import random
 import re
 
-import json
 import pycrfsuite
 import six
 
@@ -367,7 +366,7 @@ class DictionaryTagger(BaseTagger):
 
         :param list(list(string)) words: list of words, each of which is a list of tokens.
         """
-        self._dawg : list = []
+        self._known_words : list = []
         self.model = model if model is not None else self.model
         self.entity = entity if entity is not None else self.entity
         self.case_sensitive = case_sensitive if case_sensitive is not None else self.case_sensitive
@@ -377,20 +376,32 @@ class DictionaryTagger(BaseTagger):
             self.build(words)
 
     def load(self, model):
-        """Load pickled DAWG from disk."""
-        with open(find_data(model)) as fp:
-            self._dawg = json.load(fp)
+        try:
+            # Try to load plain text data files.
+            datafile = "data/dawg_tags.txt"
+            self._known_words = {}
+            with open(datafile) as fp:
+                # create a hash table for O(1) lookup, list could be slow.
+                self._known_words = { k.strip():None for k in fp }
             self._loaded_model = True
+        except:
+            # Fall back to the original pickled dawg.
+            import dawg
+            d = dawg.CompletionDAWG()
+            d.load(find_data(model))
+            # create a hash table for O(1) lookup, list could be slow.
+            self._known_words = { k:None for k in d.keys() }
 
     def save(self, path):
-        """Save pickled DAWG to disk."""
+        # Save as plain text
         with open(path, 'w+') as fp:
-            json.dump(self._dawg, fp)
+            for k in self._known_words.keys():
+                fp.write(f"{k}\n")
 
     def build(self, words):
         """Construct dictionary DAWG from tokenized words."""
         words = [self._normalize(tokens) for tokens in words]
-        self._dawg = words
+        self._known_words = words
         self._loaded_model = True
 
     def _normalize(self, tokens):
@@ -401,7 +412,7 @@ class DictionaryTagger(BaseTagger):
             return ' '.join(self.lexicon[t].lower for t in tokens)
         
     def _has_keys_with_prefix(self, key):
-        for k in self._dawg:
+        for k in self._known_words:
             if k.startswith(key):
                 return True
         return False
@@ -426,19 +437,18 @@ class DictionaryTagger(BaseTagger):
         # TODO: This could be a little more efficient by skipping indexes forward to next delim points.
         while True:
             current = norm[start_i:end_i]
-            if self._has_keys_with_prefix(current):
-                # print('%s:%s:%s' % (start_i, end_i, current))
-                # If the current span is in the dawg, and isn't followed by an alphanumeric character
-                if current in self._dawg and start_i in delims and end_i in delims:
-                    # print(current)
-                    # Subsequent longer matches with same start_i will overwrite values in matches dict
-                    matches[start_i] = (start_i, end_i, current)
-                    # We can skip forward to after this match next time we increment start_i
-                    next_start = end_i
-                # Increment end_i provided we aren't already at the end of the input
-                if end_i < length:
-                    end_i += 1
-                    continue
+            # print('%s:%s:%s' % (start_i, end_i, current))
+            # If the current span is in the dawg, and isn't followed by an alphanumeric character
+            if current in self._known_words and start_i in delims and end_i in delims:
+                # print(current)
+                # Subsequent longer matches with same start_i will overwrite values in matches dict
+                matches[start_i] = (start_i, end_i, current)
+                # We can skip forward to after this match next time we increment start_i
+                next_start = end_i
+            # Increment end_i provided we aren't already at the end of the input
+            if end_i < length:
+                end_i += 1
+                continue
             # Increment start_i provided we aren't already at the end of the input
             start_i = next_start
             if start_i >= length - 1:
