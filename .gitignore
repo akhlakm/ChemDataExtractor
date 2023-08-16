@@ -39,3 +39,6 @@ docs/_build/
 
 # PyCharm
 .idea/
+
+# CDE data dir in plain text format
+data/
