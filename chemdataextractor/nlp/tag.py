@@ -18,6 +18,7 @@ import pickle
 import random
 import re
 
+import os
 import pycrfsuite
 import six
 
@@ -377,10 +378,10 @@ class DictionaryTagger(BaseTagger):
 
     def load(self, model):
         try:
+            dawg_tags_file = os.environ.get('CDE_DAWG_FILE', None)
             # Try to load plain text data files.
-            datafile = "data/dawg_tags.txt"
             self._known_words = {}
-            with open(datafile) as fp:
+            with open(dawg_tags_file) as fp:
                 # create a hash table for O(1) lookup, list could be slow.
                 self._known_words = { k.strip():None for k in fp }
             self._loaded_model = True
