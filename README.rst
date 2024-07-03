@@ -10,7 +10,7 @@ Installation
 
 To install this fork of ChemDataExtractor, run::
 
-    pip install git+https://github.com/akhlakm/ChemDataExtractor.git
+    pip install git+https://github.com/ankush-ksharma/ChemDataExtractor.git
 
 
 Documentation
